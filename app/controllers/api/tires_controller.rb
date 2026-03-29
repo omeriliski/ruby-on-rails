@@ -1,0 +1,68 @@
+module Api
+    class TiresController < ApplicationController
+        skip_before_action :verify_authenticity_token
+
+        before_action :get_tire, only: [:show, :update, :destroy]
+
+        def index
+            @tires = Tire.all
+            # @tires = Tire.order(created_at: :asc)
+            # @tires = Tire.where(season: "winter").order(created_at: :desc)
+            tires_data = @tires.map do |tire|
+                {
+                    image: tire.tire_image.attached? ? rails_blob_url(tire.tire_image) : nil,
+                    data: tire
+                }
+            end
+
+            render json: tires_data
+        end
+
+        def show
+            # @tire = get_tire
+            image = rails_blob_url(@tire.tire_image)
+            # render json: @tire
+            render json: {'image': image, 'data': @tire}
+        end
+
+        def create
+            @tire = Tire.create(tire_params)    
+            if @tire.valid?
+                @tire.save
+                image = rails_blob_url(@tire.tire_image)
+                render json: {'image': image, 'data': @tire}
+            else
+                render json: { errors: @tire.errors.full_messages }, status: :unprocessable_entity
+            end
+        end
+
+        def update
+            # @tire = get_tire
+            @tire.update(tire_params)
+            render json: @tire
+        end
+
+        def destroy
+            # @tire = get_tire
+            @tire.destroy
+            render json: { message: "Tire deleted successfully" }
+        end
+
+        def tire_params
+            params.permit(:name, :brand, :width, :height, :inch, :season, :price, :list_price, :stock, :sku, :description, :tire_image)
+        end
+
+        def get_tire
+            @tire = Tire.find(params[:id])
+        end
+
+        def log_after_create
+            p "tire size is successfully created with id: #{self.id}"
+        end
+
+        # private
+        # def get_tire
+        #     @tire = Tire.find(params[:id])
+        # end
+    end
+end
