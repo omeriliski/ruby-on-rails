@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_29_170215) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_29_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -50,7 +50,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_29_170215) do
 
   create_table "tires", force: :cascade do |t|
     t.string "name"
-    t.string "brand"
     t.string "season"
     t.float "price"
     t.integer "stock"

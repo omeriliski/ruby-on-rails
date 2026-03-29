@@ -11,7 +11,7 @@ module Api
             tires_data = @tires.map do |tire|
                 {
                     image: tire.tire_image.attached? ? rails_blob_url(tire.tire_image) : nil,
-                    data: tire
+                    data: tire_data(tire)
                 }
             end
 
@@ -22,7 +22,7 @@ module Api
             # @tire = get_tire
             image = rails_blob_url(@tire.tire_image)
             # render json: @tire
-            render json: {'image': image, 'data': @tire}
+            render json: {'image': image, 'data': tire_data(@tire)}
         end
 
         def create
@@ -30,7 +30,7 @@ module Api
             if @tire.valid?
                 @tire.save
                 image = rails_blob_url(@tire.tire_image)
-                render json: {'image': image, 'data': @tire}
+                render json: {'image': image, 'data': tire_data(@tire)}
             else
                 render json: { errors: @tire.errors.full_messages }, status: :unprocessable_entity
             end
@@ -39,7 +39,7 @@ module Api
         def update
             # @tire = get_tire
             @tire.update(tire_params)
-            render json: @tire
+            render json: tire_data(@tire)
         end
 
         def destroy
@@ -49,11 +49,15 @@ module Api
         end
 
         def tire_params
-            params.permit(:name, :brand, :width, :height, :inch, :season, :price, :list_price, :stock, :sku, :description, :tire_image)
+            params.permit(:name, :brand_id, :width, :height, :inch, :season, :price, :list_price, :stock, :sku, :description, :tire_image)
         end
 
         def get_tire
             @tire = Tire.find(params[:id])
+        end
+
+        def tire_data(tire)
+            tire.as_json(except: [:brand_id], include: :brand)
         end
 
         def log_after_create
