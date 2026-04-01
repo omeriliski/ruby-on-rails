@@ -6,39 +6,71 @@ module Api
 
         def index
             @brands = Brand.all
-            render json: @brands
+            if !@brands.blank?
+                @message = "Brands found successfully"
+                render :index, status: :ok
+            else
+                @message = "No brands found"
+                handler_error
+            end
         end
 
         def show
-            render json: @brand
+            if !@brand.blank?
+                @message = "Brand found successfully"
+                render :show, status: :ok
+            else
+                @message = "Brand not found"
+                handler_error
+            end
         end
 
         def create
             @brand = Brand.create(brand_params)    
             if @brand.valid?
                 @brand.save
-                render json: @brand
+                @message = "Brand created successfully"
+                render :create, status: :ok
             else
-                render json: { errors: @brand.errors.full_messages }, status: :unprocessable_entity
+                @message = @brand.errors.full_messages
+                handler_error
             end
         end
 
         def update
-            @brand.update(brand_params)
-            render json: @brand
+            if @brand.update(brand_params)
+                @message = "Brand updated successfully"
+                render :update, status: :ok
+            else
+                @message = "Brand update failed"
+                handler_error
+            end
         end
 
         def destroy
-            @brand.destroy
-            render json: { message: "Brand deleted successfully" }
+            if @brand.destroy
+                @message = "Brand deleted successfully"
+                render :destroy, status: :ok
+            else
+                @message = "Brand deletion failed"
+                handler_error
+            end
         end
 
         def brand_params
             params.permit(:name)
         end
 
+        def handler_error
+            render :error, status: :bad_request
+        end
+
         def get_brand
-            @brand = Brand.find(params[:id])
+            @brand = Brand.find_by(id: params[:id])
+            if @brand.nil?
+                @message = "Brand not found"
+                handler_error
+            end
         end
     end
 end

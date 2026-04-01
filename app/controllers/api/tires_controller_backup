@@ -6,6 +6,17 @@ module Api
 
         def index
             @tires = Tire.all
+            # @tires = Tire.order(created_at: :asc)
+            # @tires = Tire.where(season: "winter").order(created_at: :desc)
+            
+            # tires_data = @tires.map do |tire|
+            #     {
+            #         image: tire.tire_image.attached? ? rails_blob_url(tire.tire_image) : nil,
+            #         data: tire_data(tire)
+            #     }
+            # end
+
+            # render json: tires_data
             if !@tires.blank?
                 @message = "Tires found successfully"
                 render :index, status: :ok
@@ -16,6 +27,10 @@ module Api
         end
 
         def show
+            # @tire = get_tire
+            # image = rails_blob_url(@tire.tire_image)
+            # render json: @tire
+            # render json: {'image': image, 'data': tire_data(@tire)}
             if !@tire.blank?
                 @message = "Tire found successfully"
                 render :show, status: :ok
@@ -33,11 +48,17 @@ module Api
                 render :create, status: :ok
             else
                 @message = @tire.errors.full_messages
-                handler_error
+                render :error, status: :bad_request
             end
+            #     image = rails_blob_url(@tire.tire_image)
+            #     render json: {'image': image, 'data': tire_data(@tire)}
+            # else
+            #     render json: { errors: @tire.errors.full_messages }, status: :unprocessable_entity
+            # end
         end
 
         def update
+            # @tire = get_tire
             if @tire.update(tire_params)
                 @message = "Tire updated successfully"
                 render :update, status: :ok
@@ -45,9 +66,11 @@ module Api
                 @message = "Tire update failed"
                 handler_error
             end
+            # render json: tire_data(@tire)
         end
 
         def destroy
+            # @tire = get_tire
             if(@tire.destroy)
                 @message = "Tire deleted successfully"
                 render :destroy, status: :ok
@@ -55,10 +78,11 @@ module Api
                 @message = "Tire deletion failed"
                 handler_error
             end
+            # render json: { message: "Tire deleted successfully" }
         end
 
         private
-        def handler_error
+        def handle_error
             render :error,status: :bad_request
         end
 
@@ -67,11 +91,20 @@ module Api
         end
 
         def get_tire
-            @tire = Tire.find_by(id: params[:id])
-            if @tire.nil?
-                @message = "Tire not found"
-                handler_error
-            end
+            @tire = Tire.find(params[:id])
         end
+
+        def tire_data(tire)
+            tire.as_json(except: [:brand_id], include: :brand)
+        end
+
+        def log_after_create
+            p "tire size is successfully created with id: #{self.id}"
+        end
+
+        # private
+        # def get_tire
+        #     @tire = Tire.find(params[:id])
+        # end
     end
 end
