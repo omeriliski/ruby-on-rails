@@ -1,8 +1,7 @@
 module Api
     class TiresController < ApplicationController
-        skip_before_action :verify_authenticity_token
-
         before_action :get_tire, only: [:show, :update, :destroy]
+        before_action :authenticate_user!, except: [:index, :show]
 
         def index
             @tires = Tire.all
@@ -26,7 +25,8 @@ module Api
         end
 
         def create
-            @tire = Tire.create(tire_params)    
+            @tire = Tire.create(tire_params)
+            authorize(@tire)
             if @tire.valid?
                 @tire.save
                 @message = "Tire created successfully"
@@ -38,6 +38,7 @@ module Api
         end
 
         def update
+            authorize(@tire)
             if @tire.update(tire_params)
                 @message = "Tire updated successfully"
                 render :update, status: :ok
@@ -48,6 +49,7 @@ module Api
         end
 
         def destroy
+            authorize(@tire)
             if(@tire.destroy)
                 @message = "Tire deleted successfully"
                 render :destroy, status: :ok
