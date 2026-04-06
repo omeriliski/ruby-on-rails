@@ -8,7 +8,7 @@ module Api
 
         after_action :log_file
         def index
-            @tires = Tire.allx
+            @tires = Tire.all
             if @tires.present?
                 @message = "Tires found successfully"
                 render :index, status: :ok
