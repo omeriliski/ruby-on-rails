@@ -1,0 +1,55 @@
+<h1><%= @tire.name %></h1>
+
+<div style="background: #f9f9f9; padding: 2rem; border-radius: 4px; margin-bottom: 2rem;">
+  <p><strong>ID:</strong> <%= @tire.id %></p>
+  <p><strong>Price:</strong> $<%= @tire.price %></p>
+  <p><strong>List Price:</strong> $<%= @tire.list_price %></p>
+  <p><strong>Width:</strong> <%= @tire.width %></p>
+  <p><strong>Height:</strong> <%= @tire.height %></p>
+  <p><strong>Inch:</strong> <%= @tire.inch %></p>
+  <p><strong>Season:</strong> <%= @tire.season %></p>
+  <p><strong>Stock:</strong> <%= @tire.stock %></p>
+  <p><strong>SKU:</strong> <%= @tire.sku %></p>
+  <p><strong>Description:</strong> <%= @tire.description %></p>
+  <% if @tire.brand %>
+    <p><strong>Brand:</strong> <%= link_to @tire.brand.name, brands_path, style: 'color: #007bff;' %></p>
+  <% end %>
+  <% if @tire.tire_image.attached? %>
+    <p style="margin-top: 2rem;">
+      <strong>Image:</strong><br>
+      <%= image_tag @tire.tire_image, style: 'max-width: 300px; margin-top: 0.5rem;' %>
+    </p>
+  <% end %>
+</div>
+
+<div style="margin-bottom: 2rem;">
+  <% if user_signed_in? %>
+    <%= link_to 'Edit', tires_edit_path(@tire), style: 'display: inline-block; background: #ffc107; color: #333; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; margin-right: 0.5rem;' %>
+    <a href="#" onclick="deleteTire(<%= @tire.id %>); return false;" style="display: inline-block; background: #dc3545; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; margin-right: 0.5rem; cursor: pointer;">Delete</a>
+  <% end %>
+  <%= link_to 'Back', tires_path, style: 'display: inline-block; background: #6c757d; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;' %>
+</div>
+
+<script>
+  function deleteTire(tireId) {
+    if (!confirm('Are you sure you want to delete this tire?')) return
+    
+    const token = localStorage.getItem('auth_token')
+    
+    fetch(`/api/tires/${tireId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+        'Authorization': token ? `Bearer ${token}` : ''
+      }
+    })
+    .then(() => {
+      alert('Tire deleted successfully!')
+      window.location.href = '/tires'
+    })
+    .catch(error => {
+      console.error('Error:', error)
+      alert('Failed to delete tire')
+    })
+  }
+</script>

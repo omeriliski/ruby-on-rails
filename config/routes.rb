@@ -2,20 +2,26 @@ Rails.application.routes.draw do
   scope 'api' do
     mount_devise_token_auth_for 'User', at: 'auth'
   end
-    # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # scope "api" do  // if you don't want to copy your controller in api folder, you can use scope to add api prefix to your routes
-  #   resources :tires
-  # end
   
-  namespace "api" do
+  # Web pages routes
+  root 'pages#index'
+  get 'tires', to: 'pages#tires_index', as: 'tires'
+  get 'tires/new', to: 'pages#tires_new', as: 'tires_new'
+  get 'tires/:id', to: 'pages#tires_show', as: 'tires_show'
+  get 'tires/:id/edit', to: 'pages#tires_edit', as: 'tires_edit'
+  
+  get 'brands', to: 'pages#brands_index', as: 'brands'
+  get 'brands/new', to: 'pages#brands_new', as: 'brands_new'
+  get 'brands/:id/edit', to: 'pages#brands_edit', as: 'brands_edit'
+  
+  get 'register', to: 'pages#register', as: 'register'
+  get 'login', to: 'pages#login', as: 'login'
+  get 'profile', to: 'pages#profile', as: 'profile'
+  
+  # API routes
+  namespace 'api' do
     resources :tires, :brands
   end
-
-  # Defines the root path route ("/")
-  # root "posts#index"
+  
+  get "up" => "rails/health#show", as: :rails_health_check
 end

@@ -11,6 +11,64 @@
   </head>
 
   <body>
-    <%= yield %>
+    <nav style="background: #333; color: white; padding: 1rem; margin-bottom: 2rem;">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h1 style="margin: 0;"><%= link_to "🛞 TireShop", root_path, style: "color: white; text-decoration: none;" %></h1>
+        </div>
+        <div style="display: flex; gap: 2rem; align-items: center;">
+          <%= link_to 'Tires', tires_path, style: 'color: white; text-decoration: none;' %>
+          <%= link_to 'Brands', brands_path, style: 'color: white; text-decoration: none;' %>
+          
+          <div id="authNav" style="display: flex; gap: 2rem; align-items: center;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      function updateNavbar() {
+        const isLoggedIn = localStorage.getItem('user_logged_in') === 'true'
+        const username = localStorage.getItem('username')
+        const authNav = document.getElementById('authNav')
+        
+        if (isLoggedIn) {
+          authNav.innerHTML = `
+            <a href="/tires/new" style="color: white; text-decoration: none;">Add Tire</a>
+            <a href="/brands/new" style="color: white; text-decoration: none;">Add Brand</a>
+            <a href="/profile" style="color: white; text-decoration: none;">Profile</a>
+            <span style="color: white; font-weight: bold;">${username}</span>
+            <a href="#" onclick="logout(); return false;" style="color: white; text-decoration: none;">Logout</a>
+          `
+        } else {
+          authNav.innerHTML = `
+            <a href="/register" style="color: white; text-decoration: none;">Register</a>
+            <a href="/login" style="color: white; text-decoration: none;">Login</a>
+          `
+        }
+      }
+      
+      function logout() {
+        localStorage.removeItem('auth_token')
+        localStorage.removeItem('user_email')
+        localStorage.removeItem('username')
+        localStorage.removeItem('user_logged_in')
+        window.location.href = '/'
+      }
+      
+      updateNavbar()
+    </script>
+
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
+      <% if notice %>
+        <div style="background: #d4edda; color: #155724; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div style="background: #f8d7da; color: #721c24; padding: 1rem; margin-bottom: 1rem; border-radius: 4px;"><%= alert %></div>
+      <% end %>
+
+      <%= yield %>
+    </div>
   </body>
 </html>

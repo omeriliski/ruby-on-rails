@@ -1,0 +1,61 @@
+<h1>Login</h1>
+
+<div style="max-width: 400px;">
+  <form id="loginForm" style="background: #f9f9f9; padding: 2rem; border-radius: 4px;">
+    <div style="margin-bottom: 1rem;">
+      <label for="email" style="display: block; margin-bottom: 0.5rem;"><strong>Email *</strong></label>
+      <input type="email" id="email" name="email" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label for="password" style="display: block; margin-bottom: 0.5rem;"><strong>Password *</strong></label>
+      <input type="password" id="password" name="password" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+
+    <button type="submit" style="background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; width: 100%;">Login</button>
+
+    <p style="text-align: center; margin-top: 1rem;">
+      Don't have an account? <%= link_to 'Register here', register_path, style: 'color: #007bff;' %>
+    </p>
+  </form>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+    
+    try {
+      const response = await fetch('/api/auth/sign_in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        // Store auth token
+        localStorage.setItem('auth_token', data.data.authentication_token)
+        localStorage.setItem('user_email', data.data.email)
+        localStorage.setItem('username', data.data.username)
+        localStorage.setItem('user_logged_in', 'true')
+        alert('Login successful!')
+        window.location.href = '/'
+      } else {
+        alert('Error: ' + (data.error || data.message || JSON.stringify(data)))
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Request failed: ' + error.message)
+    }
+  })
+</script>

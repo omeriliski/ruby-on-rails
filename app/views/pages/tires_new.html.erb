@@ -1,0 +1,113 @@
+<h1>Add New Tire</h1>
+
+<form id="tireForm" style="max-width: 600px;">
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_name" style="display: block; margin-bottom: 0.5rem;"><strong>Name *</strong></label>
+    <input type="text" id="tire_name" name="name" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_brand_id" style="display: block; margin-bottom: 0.5rem;"><strong>Brand *</strong></label>
+    <select id="tire_brand_id" name="brand_id" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+      <option value="">-- Select a brand --</option>
+      <% @brands.each do |brand| %>
+        <option value="<%= brand.id %>"><%= brand.name %></option>
+      <% end %>
+    </select>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+    <div>
+      <label for="tire_width" style="display: block; margin-bottom: 0.5rem;"><strong>Width *</strong></label>
+      <input type="number" id="tire_width" name="width" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div>
+      <label for="tire_height" style="display: block; margin-bottom: 0.5rem;"><strong>Height *</strong></label>
+      <input type="number" id="tire_height" name="height" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+    <div>
+      <label for="tire_inch" style="display: block; margin-bottom: 0.5rem;"><strong>Inch *</strong></label>
+      <input type="text" id="tire_inch" name="inch" placeholder="R16" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div>
+      <label for="tire_season" style="display: block; margin-bottom: 0.5rem;"><strong>Season *</strong></label>
+      <select id="tire_season" name="season" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+        <option value="">Select season</option>
+        <option value="summer">Summer</option>
+        <option value="winter">Winter</option>
+        <option value="all-season">All-Season</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+    <div>
+      <label for="tire_price" style="display: block; margin-bottom: 0.5rem;"><strong>Price *</strong></label>
+      <input type="number" id="tire_price" name="price" step="0.01" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+    <div>
+      <label for="tire_list_price" style="display: block; margin-bottom: 0.5rem;"><strong>List Price</strong></label>
+      <input type="number" id="tire_list_price" name="list_price" step="0.01" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+    </div>
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_stock" style="display: block; margin-bottom: 0.5rem;"><strong>Stock *</strong></label>
+    <input type="number" id="tire_stock" name="stock" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_sku" style="display: block; margin-bottom: 0.5rem;"><strong>SKU *</strong></label>
+    <input type="text" id="tire_sku" name="sku" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_description" style="display: block; margin-bottom: 0.5rem;"><strong>Description *</strong></label>
+    <textarea id="tire_description" name="description" required style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; min-height: 100px;"></textarea>
+  </div>
+
+  <div style="margin-bottom: 1rem;">
+    <label for="tire_image" style="display: block; margin-bottom: 0.5rem;"><strong>Image</strong></label>
+    <input type="file" id="tire_image" name="tire_image" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+  </div>
+
+  <button type="submit" style="background: #007bff; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; margin-right: 0.5rem;">Create Tire</button>
+  <%= link_to 'Cancel', tires_path, style: 'display: inline-block; background: #6c757d; color: white; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px;' %>
+</form>
+
+<script>
+  document.getElementById('tireForm').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    
+    const formData = new FormData(e.target)
+    const data = Object.fromEntries(formData)
+    const token = localStorage.getItem('auth_token')
+    
+    try {
+      const response = await fetch('/api/tires', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+          'Authorization': token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify(data)
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        alert('Tire created successfully!')
+        window.location.href = '/tires'
+      } else {
+        alert('Error: ' + (result.message || JSON.stringify(result)))
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('Request failed: ' + error.message)
+    }
+  })
+</script>

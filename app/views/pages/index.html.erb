@@ -1,0 +1,26 @@
+<h1>Welcome to TireShop</h1>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+  <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+    <h2>Popular Tires</h2>
+    <% @tires.each do |tire| %>
+      <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #eee;">
+        <h3><%= link_to tire.name, tires_show_path(tire), style: 'text-decoration: none; color: #333;' %></h3>
+        <p><strong>Price:</strong> $<%= tire.price %></p>
+        <p><strong>Season:</strong> <%= tire.season %></p>
+        <p><strong>Stock:</strong> <%= tire.stock %></p>
+      </div>
+    <% end %>
+    <%= link_to 'View All Tires', tires_path, style: 'display: inline-block; background: #007bff; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;' %>
+  </div>
+
+  <div style="border: 1px solid #ddd; padding: 1rem; border-radius: 4px;">
+    <h2>Brands</h2>
+    <% @brands.each do |brand| %>
+      <div style="margin-bottom: 0.5rem;">
+        <strong><%= brand.name %></strong>
+      </div>
+    <% end %>
+    <%= link_to 'View All Brands', brands_path, style: 'display: inline-block; background: #28a745; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; margin-top: 1rem;' %>
+  </div>
+</div>
