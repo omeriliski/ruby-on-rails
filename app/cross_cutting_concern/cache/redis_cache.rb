@@ -6,6 +6,7 @@ module Cache
       if !@entity.blank?
         @is_cached = true
         Rails.logger.info("Cache hit for controller_name=#{controller_name}, action_name=#{action_name}")
+        log_file if respond_to?(:log_file)
         render template: "api/#{controller_name}/#{action_name}", formats: [:json], status: :ok
       else
         @is_cached = false

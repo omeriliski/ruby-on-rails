@@ -6,8 +6,9 @@ module Api
         after_action -> { write_cache(@tires || @tire) }, only: [:index, :show], if: -> { @is_cached == false }
         after_action -> { remove_cache("index, show") }, only: [:create, :update, :destroy]
 
+        after_action :log_file
         def index
-            @tires = Tire.all
+            @tires = Tire.allx
             if @tires.present?
                 @message = "Tires found successfully"
                 render :index, status: :ok
