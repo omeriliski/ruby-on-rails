@@ -1,20 +1,25 @@
+entity = @tire || @entity
+
+p "tire=> #{@tire}"
+p "entity=> #{@entity}"
+
 json.tire do
-    json.id @tire.id
-    json.name @tire.name
-    json.width @tire.width
-    json.height @tire.height
-    json.inch @tire.inch
-    json.season @tire.season
-    json.price @tire.price
-    json.list_price @tire.list_price
-    json.stock @tire.stock
-    json.description @tire.description
-    json.sku @tire.sku
-    if((defined? @tire.tire_image) && (@tire.tire_image.filename != nil))
-        json.tire_image rails_blob_url(@tire.tire_image)
+    json.id entity.id
+    json.name entity.name
+    json.width entity.width
+    json.height entity.height
+    json.inch entity.inch
+    json.season entity.season
+    json.price entity.price
+    json.list_price entity.list_price
+    json.stock entity.stock
+    json.description entity.description
+    json.sku entity.sku
+    if ((defined? entity.tire_image) && (entity.tire_image.filename != nil))
+        json.tire_image rails_blob_url(entity.tire_image)
     end
-    json.brand @tire.brand
+    json.brand entity.brand
 end
 
-json.message @message
+json.message(@message.presence || (@entity.present? ? "from cache" : "from db"))
 json.success true

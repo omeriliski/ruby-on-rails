@@ -1,4 +1,6 @@
-json.tires @tires.each do |tire|
+tires = @tires || @entity || []
+
+json.tires tires.each do |tire|
     json.id tire.id
     json.name tire.name
     json.width tire.width
@@ -10,11 +12,11 @@ json.tires @tires.each do |tire|
     json.stock tire.stock
     json.description tire.description
     json.sku tire.sku
-    if((defined? tire.tire_image) && (tire.tire_image.filename != nil))
+    if ((defined? tire.tire_image) && (tire.tire_image.filename != nil))
         json.tire_image rails_blob_url(tire.tire_image)
     end
     json.brand tire.brand
 end
 
-json.message @message
+json.message(@message.presence || (@entity.present? ? "from cache" : "from db"))
 json.success true

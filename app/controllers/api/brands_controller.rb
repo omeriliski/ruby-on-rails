@@ -1,7 +1,10 @@
 module Api
     class BrandsController < ApplicationController
-        before_action :get_brand, only: [:show, :update, :destroy]
         before_action :authenticate_user!, except: [:index, :show]
+        before_action :read_cache, only: [:index, :show]
+        before_action :get_brand, only: [:show, :update, :destroy]
+        after_action -> { write_cache(@brands || @brand) }, only: [:index, :show], if: -> { @is_cached == false }
+        after_action -> { remove_cache }, only: [:create, :update, :destroy], if: -> { response.successful? }
 
         def index
             @brands = Brand.all

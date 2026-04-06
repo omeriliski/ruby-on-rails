@@ -1,11 +1,14 @@
 module Api
     class TiresController < ApplicationController
-        before_action :get_tire, only: [:show, :update, :destroy]
         before_action :authenticate_user!, except: [:index, :show]
+        before_action :read_cache, only: [:index, :show]
+        before_action :get_tire, only: [:show, :update, :destroy]
+        after_action -> { write_cache(@tires || @tire) }, only: [:index, :show], if: -> { @is_cached == false }
+        after_action -> { remove_cache("index, show") }, only: [:create, :update, :destroy]
 
         def index
             @tires = Tire.all
-            if !@tires.blank?
+            if @tires.present?
                 @message = "Tires found successfully"
                 render :index, status: :ok
             else

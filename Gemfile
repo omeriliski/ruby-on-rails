@@ -69,3 +69,6 @@ group :test do
 end
 
 gem "pundit", "~> 2.5"
+gem 'redis', '~> 4.0'
+gem 'redis-rails'
+gem 'connection_pool', '~> 2.4'
