@@ -1,8 +1,5 @@
 entity = @tire || @entity
 
-p "tire=> #{@tire}"
-p "entity=> #{@entity}"
-
 json.tire do
     json.id entity.id
     json.name entity.name
