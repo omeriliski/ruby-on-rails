@@ -72,3 +72,4 @@ gem "pundit", "~> 2.5"
 gem 'redis', '~> 4.0'
 gem 'redis-rails'
 gem 'connection_pool', '~> 2.4'
+gem 'sidekiq'

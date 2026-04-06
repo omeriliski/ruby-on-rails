@@ -5,6 +5,8 @@ class Tire < ApplicationRecord
     after_create :log_after_create   # method that runs after a record is created
     # before_create // method that runs before a record is created
 
+    after_create :increase_price_after_save
+
     validates :name, presence: true, length: { minimum: 3, maximum: 100 }
     validates :description, presence: true, length: { minimum: 10, maximum: 250 }
     validates :price, presence: true, numericality: { greater_than: 0 }
@@ -15,6 +17,10 @@ class Tire < ApplicationRecord
     validates :width, presence: true, numericality: { only_integer: true, greater_than: 0 }
     validates :height, presence: true, numericality: { only_integer: true, greater_than: 0 }
     validate :inch_starts_with_R
+
+    def increase_price_after_save
+        TireJob.set(wait: 30.seconds).perform_later(self)
+    end
 
     def inch_starts_with_R
         if !self.inch.start_with?("R")
@@ -33,4 +39,5 @@ class Tire < ApplicationRecord
     def log_after_create
         p "tire is successfully created with id: #{self.id}"
     end
+
 end
